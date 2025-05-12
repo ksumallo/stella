@@ -1,16 +1,41 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Fredoka, Quicksand, Sora } from "next/font/google";
 import "./globals.css";
+import { CircleHelp, Handshake, Home, Mail, Star } from "lucide-react";
+import { NavDestination, TopNavBar } from "@/components/blocks/top-navbar";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const fredoka = Quicksand({
+  variable: "--font-fredoka",
   subsets: ["latin"],
-});
+})
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const navDestinations: NavDestination[] = [
+  {
+    href: "/about",
+    label: "About",
+    icon: <Star className="h-6 w-6" />,
+  },
+  {
+    href: "/contact-us",
+    label: "Contact Us",
+    icon: <Mail className="h-6 w-6" />,
+  },
+  {
+    href: "/home",
+    label: "Home",
+    icon: <Home className="h-6 w-6" />,
+  },
+  {
+    href: "/join",
+    label: "Join Us",
+    icon: <Handshake className="h-6 w-6" />,
+  },
+  {
+    href: "/help",
+    label: "Help",
+    icon: <CircleHelp className="h-6 w-6" />,
+  },
+]
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -25,8 +50,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${fredoka.variable} font-sans antialiased`}
       >
+        <TopNavBar destinations={navDestinations}/>
         {children}
       </body>
     </html>
