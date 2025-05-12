@@ -15,7 +15,7 @@ export default function LandingPage() {
             <Button 
                 onClick={() => router.push('/login')}
                 className='inline-flex flex-row  py-8 bg-white text-black font-bold'> 
-                <span className="text-3xl"> Let's go! </span>
+                <span className="text-3xl"> Let&apos;s go! </span>
                 <ChevronRight className='h-8 w-8' /> 
             </Button>
         </div>
@@ -44,7 +44,6 @@ export default function LandingPage() {
                         width={512} height={512}
                         src='/logos/deepseek.png' alt='deepseek-logo'
                         className='h-16 w-16' />
-
                 </div>
             </div>  
 

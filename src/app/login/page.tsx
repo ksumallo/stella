@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-export default async function LoginPage() {
+export default function LoginPage() {
     const router = useRouter();
     return <main className="flex flex-col p-16 justify-center items-center gap-8">
         <h1 className='text-6xl font-bold'> I am a... </h1>

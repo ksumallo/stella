@@ -24,7 +24,6 @@ interface TopNavBarProps {
 export function TopNavBar({
     variant = 'default',
     profile,
-    destinations = []
 } : TopNavBarProps) {
     return <nav className="flex items-center justify-between p-4 bg-gray-100">
         <h1 className='text-blackboard font-black'> LOGO </h1>

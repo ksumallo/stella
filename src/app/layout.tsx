@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import { Fredoka, Quicksand, Sora } from "next/font/google";
+import { Quicksand } from "next/font/google";
 import "./globals.css";
 import { CircleHelp, Handshake, Home, Mail, Star } from "lucide-react";
 import { NavDestination, TopNavBar } from "@/components/blocks/top-navbar";
 
-const fredoka = Quicksand({
+const quicksand = Quicksand({
   variable: "--font-fredoka",
   subsets: ["latin"],
 })
@@ -50,7 +50,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${fredoka.variable} font-sans antialiased`}
+        className={`${quicksand.variable} font-sans antialiased`}
       >
         <TopNavBar destinations={navDestinations}/>
         {children}

@@ -3,7 +3,7 @@ module.exports = {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['var(--font-fredoka)'],
+                sans: ['var(--font-quicksand)'],
             },
             backgroundImage: {
                 'blackboard': 'linear-gradient(to bottom, #70BD73, #2F7731)'
