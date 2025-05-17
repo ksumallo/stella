@@ -2,69 +2,10 @@
 
 import Conversation, { Message } from "@/components/blocks/conversation";
 import { Button } from "@/components/ui/button";
-import { FileIcon, Plus, X } from "lucide-react";
-import { useState, useRef, ChangeEvent } from "react";
-import { uploadToGemini } from "../workspace/gemini";
-
-
-type UploadedFile = {
-    id: string;
-    file: File;
-    name: string;
-    type: string;
-};
+import { useState } from "react";
 
 export default function WorkspacePage() {
     const [messages, setMessages] = useState<Message[]>([])
-    const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
-    const fileInputRef = useRef<HTMLInputElement>(null);
-    
-    // Allowed file types
-    const allowedFileTypes = [
-        'application/pdf', // PDF files
-        'text/plain', // TXT files
-        'application/msword', // DOC files
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // DOCX files
-    ];
-
-    const handleFileUpload = (e: ChangeEvent<HTMLInputElement>) => {
-        if (!e.target.files || e.target.files.length === 0) return;
-        
-        const newFiles = Array.from(e.target.files).filter(file => {
-            // Check if file type is allowed
-            if (!allowedFileTypes.includes(file.type)) {
-                alert(`File type ${file.type} is not allowed. Please upload PDF, TXT, DOC, or DOCX files only.`);
-                return false;
-            }
-            return true;
-        });
-        
-        // Add new files to state
-        const newUploadedFiles = newFiles.map(file => ({
-            id: Math.random().toString(36).substring(2, 9), // Simple unique ID
-            file,
-            name: file.name,
-            type: file.type,
-        }));
-        
-        setUploadedFiles(prev => [...prev, ...newUploadedFiles]);
-        
-        // Reset file input
-        if (fileInputRef.current) {
-            fileInputRef.current.value = '';
-        }
-    };
-    
-    const handleButtonClick = () => {
-        // Trigger file input click
-        if (fileInputRef.current) {
-            fileInputRef.current.click();
-        }
-    };
-    
-    const removeFile = (id: string) => {
-        setUploadedFiles(prev => prev.filter(file => file.id !== id));
-    };
 
     return <div className='p-8'> 
         <div className="flex justify-end mb-4">

@@ -1,14 +1,13 @@
 'use client'
 
-import Conversation, { Message } from "@/components/blocks/conversation";
+import Conversation from "@/components/blocks/conversation";
 import { Button } from "@/components/ui/button";
 import { FileIcon, Plus, X } from "lucide-react";
-import { useState, useRef, ChangeEvent, useMemo, useEffect } from "react";
+import { useRef, ChangeEvent } from "react";
 
-import { deleteFromGemini, getGeminiFiles, sendToGemini, uploadToGemini } from "./gemini";
+import { deleteFromGemini, uploadToGemini } from "./gemini";
 import { useAtom } from "jotai";
-import { conversationAtom, submissionAtom, uploadedFilesAtom } from "../states";
-import { buffer } from "stream/consumers";
+import { conversationAtom, uploadedFilesAtom } from "../states";
 
 export type UploadedFile = {
     sent: boolean;
@@ -20,13 +19,9 @@ export type UploadedFile = {
 };
 
 export default function WorkspacePage() {
-    const [submission, setSubmission] = useAtom(submissionAtom)
     const [messages, setMessages] = useAtom(conversationAtom)
 
     const [fileUris, setFileUris] = useAtom(uploadedFilesAtom)
-    const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
-    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-    const [isFilesProcessed, setIsFilesProcessed] = useState<boolean>(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     // Fetch files from Gemini on component mount
@@ -93,7 +88,6 @@ export default function WorkspacePage() {
 
         await uploadToGemini(processedFiles).then((res) => {
             console.log('Uploaded files:', res);
-            setIsFilesProcessed(true);
             setFileUris(res);
         })
 
@@ -102,16 +96,6 @@ export default function WorkspacePage() {
             fileInputRef.current.value = '';
         }
     };
-
-    const inlineData = useMemo(() => {
-        console.log('New inlineData:', uploadedFiles);
-        return uploadedFiles.map(file => ({
-            inlineData: {
-                mimeType: file.type,
-                data: file.buffer || '' // Use the pre-processed base64 data
-            }
-        }));
-    }, [uploadedFiles])
     
     const handleButtonClick = () => {
         // Trigger file input click
@@ -122,21 +106,18 @@ export default function WorkspacePage() {
     
     const removeFile = (toDelete: UploadedFile) => {
         deleteFromGemini(toDelete).then(() => {
-            setUploadedFiles(prev => prev.filter(file => file.uri !== toDelete.uri));
+            setFileUris(prev => prev.filter(file => file.uri !== toDelete.uri));
         }).catch((error) => {
             console.error('[Gemini] Error deleting file:', error);
-        })
-        setIsFilesProcessed(false); // Reset processed state when files change
+        })// Reset processed state when files change
     };
 
     return <div className='p-8'> 
         <div className="flex justify-end mb-4">
             <Button 
                 variant='primary' 
-                onClick={() => {}}
-                disabled={isSubmitting || uploadedFiles.length === 0}
-            > 
-                {isSubmitting ? "Submitting..." : isFilesProcessed ? "Submitted" : "Submit"} 
+                onClick={() => {}}> 
+                Submit
             </Button>
         </div>
         <main className='grid grid-cols-3 gap-8'>
@@ -196,7 +177,6 @@ export default function WorkspacePage() {
                 <Conversation 
                     messages={messages} 
                     setMessages={setMessages} 
-                    referenceFiles={fileUris}
                 />
             </section>
         </main>

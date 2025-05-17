@@ -8,11 +8,8 @@ import Image from "next/image";
 import { sendToGemini } from '@/app/workspace/gemini';
 
 import Markdown from 'react-markdown';
-import { createRoot } from 'react-dom/client';
-import { UploadedFile } from '@/app/workspace/page';
 import { useAtom } from 'jotai';
 import { uploadedFilesAtom } from '@/app/states';
-import { set } from 'date-fns';
 
 export type Message = {
     type: 'me' | 'ai';
@@ -23,13 +20,11 @@ export type Message = {
 interface ConversationProps {
     messages: Message[];
     setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
-    referenceFiles?: UploadedFile[]; // Optional array of File objects to use as reference
 }
 
 export default function Conversation({
     messages,
     setMessages,
-    referenceFiles,
 }: ConversationProps) {
     const [inputMessage, setInputMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
