@@ -76,6 +76,18 @@ export async function sendToGemini(prompt: string, inlineData: UploadedFile[]) {
   return response.text;
 }
 
+export async function askFeedback(submission: UploadedFile) {
+  console.log("Asking Gemini for feedback on : ", submission.name);
+
+  const rubrik = 'Provide your feedback on the following submission. Please provide a score out of 30 and a short comment on the submission. The feedback should be constructive and should help the student understand their strengths and weaknesses in the submission.';
+
+  const response = await chat.sendMessage({ message: [rubrik, { fileData: { fileUri: submission.uri, mimeType: submission.type }}]})
+
+  console.log('[Gemini]', response);
+
+  return response.text;
+}
+
 export async function uploadToGemini(inlineData: UploadedFile[]) {
   console.log("Sending message to Gemini with files: ", inlineData);
 
