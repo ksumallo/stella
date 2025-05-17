@@ -1,4 +1,4 @@
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, Type } from "@google/genai";
 import { UploadedFile } from "./page";
 
 // Define types for Gemini API request
@@ -9,11 +9,38 @@ type InlineData = {
   };
 };
 
+const feedbackResponseSchema = {
+  type: Type.OBJECT,
+  properties: {
+    similarity: {
+      type: Type.OBJECT,
+      properties: {
+        type: { type: Type.STRING },
+        summary: { type: Type.STRING },
+        score: { type: Type.NUMBER }
+      },
+      propertyOrdering: ["type", "summary", "score"]
+    },
+    stella: {
+      type: Type.OBJECT,
+      properties: {
+        general: { type: Type.STRING },
+        positive: { type: Type.STRING },
+        deficiencies: { type: Type.STRING },
+        suggestions: { type: Type.STRING }
+      },
+      propertyOrdering: ["general", "positive", "deficiencies", "suggestions"]
+    },
+    instructor: { type: Type.STRING }
+  },
+  propertyOrdering: ["similarity", "stella", "instructor"]
+}
+
 // Define the system instruction for the AI
 const systemInstruction = "You are an AI chatbot named STELLA (System for Transparent Engagement with LLMs for Learning and Assessment). You are designed to assist students in their assessment, be it a paper or code, while adhering to learning objectives and goals. Your primary task is to answer the students' queries. You should provide accurate and relevant information to help them understand the subject matter. However, you must not provide direct answers to any questions that are part of an assignment or exam. Instead, guide the students in finding the right resources or information to complete their tasks independently. Your goal is to support their learning process while ensuring academic integrity to promote responsible and ethical use of AI. Therefore, for the student's information, your conversation with the student will be submitted along with their assignment to the instructor and the instructor will have a full view of this conversation. For instances where the student exhibits a misunderstanding of the subject matter, inform the student in a friendly and informative manner. Refrain from overwhelming the student with lengthy explainations, but state where the misconception lies then formulate questions that will prompt the student to question their current understanding and encourage them to ask more questions that will clarify the topic or further their understanding of the topic. You should also encourage them to think critically and independently about their work. If a student asks for help with a specific assignment or exam question, you should redirect them to the relevant resources, such as the material that they uploaded to the workspace.";
 
 const ai = new GoogleGenAI({ 
-  apiKey: 'AIzaSyDm_stszpExkqPLytA8ElziPIpzE10wJmc  ', 
+  apiKey: 'AIzaSyDm_stszpExkqPLytA8ElziPIpzE10wJmc', 
 });
 
 // Make API request with proper format
@@ -79,11 +106,30 @@ export async function sendToGemini(prompt: string, inlineData: UploadedFile[]) {
 export async function askFeedback(submission: UploadedFile) {
   console.log("Asking Gemini for feedback on : ", submission.name);
 
+  
+  const uploadSuccess = await ai.files.upload({
+    file: submission.file
+  })
+  
+  if (!uploadSuccess) {
+    console.error('[Gemini] Error uploading file:', uploadSuccess);
+    return;
+  }
+
   const rubrik = 'Provide your feedback on the following submission. Please provide a score out of 30 and a short comment on the submission. The feedback should be constructive and should help the student understand their strengths and weaknesses in the submission.';
 
-  const response = await chat.sendMessage({ message: [rubrik, { fileData: { fileUri: submission.uri, mimeType: submission.type }}]})
+  // const response = await ai.models.generateContent({ [rubrik, { fileData: { fileUri: submission.uri, mimeType: submission.type }}]})
+  const response = await ai.models.generateContent({
+    model: "gemini-2.0-flash",
+    config: {
+      systemInstruction: systemInstruction,
+      responseMimeType: "application/json",
+      responseSchema: feedbackResponseSchema
+    },
+    contents: [rubrik, { fileData: { fileUri: uploadSuccess.uri, mimeType: uploadSuccess.mimeType }}]
+  })
 
-  console.log('[Gemini]', response);
+  console.log('[Gemini]', response.text);
 
   return response.text;
 }

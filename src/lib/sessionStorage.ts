@@ -1,10 +1,11 @@
 import { Message } from '@/components/blocks/conversation';
 import { atomWithStorage } from 'jotai/utils'
 
+
 interface Submission {
     references: File[];
     conversation: Message[];
-    fileSubmission: File;
+    fileSubmission?: File;
     timestamp: Date;
 }
 
