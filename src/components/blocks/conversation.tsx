@@ -5,24 +5,37 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Send } from "lucide-react";
 import Image from "next/image";
+import { sendToGemini } from '@/app/workspace/gemini';
 
-type Message = {
+import Markdown from 'react-markdown';
+import { createRoot } from 'react-dom/client';
+import { UploadedFile } from '@/app/workspace/page';
+import { useAtom } from 'jotai';
+import { uploadedFilesAtom } from '@/app/states';
+import { set } from 'date-fns';
+
+export type Message = {
     type: 'me' | 'ai';
     message: string;
     timestamp: Date;
 }
 
-export default function Conversation() {
-    const [messages, setMessages] = useState<Message[]>([
-        {
-            type: 'ai',
-            message: 'Hello! How can I help you today?',
-            timestamp: new Date(),
-        }
-    ]);
-    const [inputMessage, setInputMessage] = useState('');
+interface ConversationProps {
+    messages: Message[];
+    setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
+    referenceFiles?: UploadedFile[]; // Optional array of File objects to use as reference
+}
 
-    const sendMessage = () => {
+export default function Conversation({
+    messages,
+    setMessages,
+    referenceFiles,
+}: ConversationProps) {
+    const [inputMessage, setInputMessage] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [fileUris, setFileUris] = useAtom(uploadedFilesAtom);
+
+    const sendMessage = async () => {
         if (inputMessage.trim() === '') return;
         
         // Add user message
@@ -32,21 +45,37 @@ export default function Conversation() {
             timestamp: new Date(),
         };
         
-        // Clear input field
+        // Clear input field and show loading state
+        const userQuery = inputMessage;
         setInputMessage('');
+        setIsLoading(true);
         
         // Update messages state with user message
         setMessages(prev => [...prev, userMessage]);
         
-        // Simulate AI response after a short delay
-        setTimeout(() => {
+        try {
+            // Use reference files if provided
+            const response = await sendToGemini(userQuery, fileUris);
+            setFileUris(fileUris.map(file => ({ ...file, sent: true })));
+            
+            console.log('Got message from Gemini:', response);
             const aiMessage: Message = {
                 type: 'ai',
-                message: `I received your message: "${inputMessage}"`,
+                message: response!,
                 timestamp: new Date(),
             };
             setMessages(prev => [...prev, aiMessage]);
-        }, 1000);
+        } catch (e) {
+            console.error('Error sending message to Gemini:', e);
+            const errorMessage: Message = {
+                type: 'ai',
+                message: 'Sorry, I encountered an error while processing your request.',
+                timestamp: new Date(),
+            };
+            setMessages(prev => [...prev, errorMessage]);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -75,21 +104,18 @@ export default function Conversation() {
                 {messages.map((msg, index) => (
                     <div 
                         key={index} 
-                        className={`flex ${msg.type === 'me' ? 'justify-end' : 'justify-start'}`}
-                    >
+                        className={`flex ${msg.type === 'me' ? 'justify-end' : 'justify-start'}`}>
                         <div 
                             className={`max-w-[70%] p-3 rounded-lg ${
                                 msg.type === 'me' 
                                     ? 'bg-blackboard text-white rounded-tr-none'
                                     : 'bg-white border border-gray-200 rounded-tl-none'
-                            }`}
-                        >
-                            {msg.message}
+                            }`}> 
+                            <Markdown>{msg.message}</Markdown>
                             <div 
                                 className={`text-xs mt-1 ${
                                     msg.type === 'me' ? 'text-gray-300' : 'text-gray-500'
-                                }`}
-                            >
+                                }`}>
                                 {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                             </div>
                         </div>
@@ -103,10 +129,15 @@ export default function Conversation() {
                     value={inputMessage}
                     onChange={(e) => setInputMessage(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    placeholder="Type your message..."
+                    placeholder={isLoading ? "STELLA is thinking..." : "Type your message..."}
                     className="flex-1"
+                    disabled={isLoading}
                 />
-                <Button onClick={sendMessage} disabled={!inputMessage.trim()}>
+                <Button 
+                    onClick={sendMessage} 
+                    disabled={!inputMessage.trim() || isLoading}
+                    className={isLoading ? "animate-pulse" : ""}
+                >
                     <Send className="h-4 w-4" />
                 </Button>
             </div>
