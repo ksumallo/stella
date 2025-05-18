@@ -4,7 +4,7 @@ import Conversation from "@/components/blocks/conversation";
 import { Button } from "@/components/ui/button";
 import { FileIcon, Plus, X, Upload, CheckCircle2, ChevronUp, ChevronDown } from "lucide-react";
 import { useRef, ChangeEvent, useState } from "react";
-
+// import { PDFObject } from "react-pdfobject";
 import { deleteFromGemini, uploadToGemini } from "./gemini";
 import { useAtom } from "jotai";
 import { conversationAtom, uploadedFilesAtom } from "../states";
@@ -179,22 +179,20 @@ export default function WorkspacePage() {
 
 	return (
 		<div className="p-4 lg:p-8 min-h-screen flex flex-col">
-			<div className="flex justify-between mb-4">
-				<div className="flex items-center gap-2">
-					{/* Materials toggle button */}
-					<Button variant="ghost" onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)} className="flex items-center gap-2 lg:hidden">
-						{isSidebarCollapsed ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
-						{isSidebarCollapsed ? "Show Materials" : "Hide Materials"}
-					</Button>
-				</div>
-			</div>
-
 			{/* Mobile View - Materials first, then Assignment Submission */}
 			<div className={`mb-4 lg:hidden`}>
 				{/* Uploaded Materials Section - Mobile */}
-				<div className={`bg-white border-gray-300 border-b-6 border-3 rounded-xl p-4 mb-4 ${isSidebarCollapsed ? "hidden" : "block"}`}>
-					<h2 className="text-lg font-extrabold text-gray-800 mb-3">Reference Materials</h2>
-					<div className="flex flex-col gap-4 mb-4">
+				<div className={`bg-white border-gray-300 border-b-6 border-3 rounded-xl px-4 py-3 mb-4`}>
+					<div className="flex flex-row justify-between items-center">
+						<h2 className="text-lg font-extrabold text-gray-800">Reference Materials</h2>
+						{/* Materials toggle button */}
+						<Button variant="ghost" onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)} className="flex items-center gap-2 lg:hidden">
+							{isSidebarCollapsed ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
+							{isSidebarCollapsed ? "Show Materials" : "Hide Materials"}
+						</Button>
+					</div>
+
+					<div className={`flex flex-col gap-4 mb-4 mt-3 ${isSidebarCollapsed ? "hidden" : "block"}`}>
 						{
 							<div className="border-2 border-dashed border-gray-300 rounded-xl p-6 flex flex-col gap-4 items-center justify-center">
 								{fileUris.map((file) => (
@@ -296,7 +294,7 @@ export default function WorkspacePage() {
 			<main className="flex flex-col lg:grid lg:grid-cols-6 gap-4 lg:gap-8 h-full">
 				<aside className="hidden lg:flex lg:flex-col lg:col-span-2 gap-4 h-full">
 					{/* Uploaded Materials - Desktop */}
-					<div className="flex flex-col gap-4 overflow-y-auto p-4 border-b-6 border-3 border-gray-300 rounded-xl min-h-[300px]">
+					<div className="flex flex-col gap-4 p-4 border-b-6 border-3 border-gray-300 rounded-xl min-h-[300px]">
 						<h2 className="text-lg font-extrabold text-gray-800 mb-3">Reference Materials</h2>
 						<div className="border-2 border-dashed border-gray-300 rounded-xl p-6 flex flex-col gap-4 items-center justify-center">
 							{fileUris.map((file) => (
@@ -323,13 +321,13 @@ export default function WorkspacePage() {
 							))}
 
 							{fileUris.length < 1 ? (
-								<>
+								<div className="flex flex-col items-center justify-center">
 									<FileIcon className="h-10 w-10 text-gray-400 mb-2" />
 									<p className="text-gray-500 text-center mb-1">No files uploaded yet</p>
-									<p className="text-gray-400 text-sm text-center mb-4">Upload PDF, TXT, DOC, or DOCX files</p>
-								</>
+									<p className="text-gray-400 text-sm text-center">Upload PDF, TXT, DOC, or DOCX files</p>
+								</div>
 							) : (
-								<></>
+								<div className="flex h-full"></div>
 							)}
 							<Button variant="outline" className="w-full border-gray-300" onClick={handleButtonClick}>
 								<Plus className="mr-2" />

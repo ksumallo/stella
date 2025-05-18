@@ -1,16 +1,23 @@
 <svg width="140" height="139" viewBox="0 0 140 139" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g filter="url(#filter0_ii_335_1286)">
+<g filter="url(#filter0_ii_335_1316)">
 <path d="M78.0592 16.2132C74.7494 9.55461 65.2506 9.55461 61.9408 16.2132L51.529 37.1591C50.213 39.8064 47.6809 41.6387 44.7549 42.0608L21.5802 45.4042C14.1782 46.4721 11.2324 55.5783 16.6064 60.7792L33.2932 76.9287C35.4327 78.9993 36.4097 81.994 35.9029 84.928L31.9525 107.796C30.6839 115.14 38.3793 120.755 44.9857 117.307L65.8354 106.424C68.4448 105.062 71.5552 105.062 74.1646 106.424L95.0143 117.307C101.621 120.755 109.316 115.14 108.048 107.796L104.097 84.928C103.59 81.994 104.567 78.9993 106.707 76.9287L123.394 60.7792C128.768 55.5783 125.822 46.4721 118.42 45.4042L95.2452 42.0608C92.3191 41.6386 89.787 39.8064 88.4711 37.1591L78.0592 16.2132Z" fill="#FFCF4D"/>
 </g>
 <path d="M74.8 69V69C73.8721 74.528 65.928 74.528 65.0001 69V69" stroke="#755E00" stroke-width="3" stroke-linecap="round"/>
 <rect width="16" height="21" rx="8" transform="matrix(-1 8.74228e-08 8.74228e-08 1 89 45)" fill="white"/>
-<rect width="8.4" height="13.9" rx="4.2" transform="matrix(-1 8.74228e-08 8.74228e-08 1 85 48.6504)" fill="#222222"/>
-<ellipse cx="2.1" cy="2.085" rx="2.1" ry="2.085" transform="matrix(-1 8.74228e-08 8.74228e-08 1 81.2 48.6504)" fill="white"/>
+<rect width="8.4" height="13.9" rx="4.2" transform="matrix(-1 8.74228e-08 8.74228e-08 1 87.3999 47)" fill="#222222"/>
+<ellipse cx="2.1" cy="2.085" rx="2.1" ry="2.085" transform="matrix(-1 8.74228e-08 8.74228e-08 1 83.5999 47)" fill="white"/>
+<mask id="mask0_335_1316" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="51" y="49" width="16" height="17">
+<rect width="16" height="17" rx="8" transform="matrix(-1 8.74228e-08 8.74228e-08 1 67 49)" fill="white"/>
+</mask>
+<g mask="url(#mask0_335_1316)">
 <rect width="16" height="21" rx="8" transform="matrix(-1 8.74228e-08 8.74228e-08 1 67 45)" fill="white"/>
-<rect width="8.4" height="13.9" rx="4.2" transform="matrix(-1 8.74228e-08 8.74228e-08 1 63 48.6504)" fill="#222222"/>
-<ellipse cx="2.1" cy="2.085" rx="2.1" ry="2.085" transform="matrix(-1 8.74228e-08 8.74228e-08 1 59.2 48.6504)" fill="white"/>
+<rect width="8.4" height="13.9" rx="4.2" transform="matrix(-1 8.74228e-08 8.74228e-08 1 65.3999 47)" fill="#222222"/>
+<ellipse cx="2.1" cy="2.085" rx="2.1" ry="2.085" transform="matrix(-1 8.74228e-08 8.74228e-08 1 60.2 51)" fill="white"/>
+</g>
+<path d="M52 53V53C55.866 49.134 62.134 49.134 66 53V53" stroke="#A77B0D" stroke-width="3" stroke-linecap="round"/>
+<path d="M74 44V44C77.866 40.134 84.134 40.134 88 44V44" stroke="#A77B0D" stroke-width="3" stroke-linecap="round"/>
 <defs>
-<filter id="filter0_ii_335_1286" x="13.8555" y="3.21973" width="112.289" height="115.129" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<filter id="filter0_ii_335_1316" x="13.8555" y="3.21973" width="112.289" height="115.129" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
 <feFlood flood-opacity="0" result="BackgroundImageFix"/>
 <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
 <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
@@ -18,13 +25,13 @@
 <feGaussianBlur stdDeviation="5"/>
 <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
 <feColorMatrix type="matrix" values="0 0 0 0 0.460264 0 0 0 0 0.368211 0 0 0 0 0 0 0 0 0.75 0"/>
-<feBlend mode="plus-darker" in2="shape" result="effect1_innerShadow_335_1286"/>
+<feBlend mode="plus-darker" in2="shape" result="effect1_innerShadow_335_1316"/>
 <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
 <feOffset dy="-5"/>
 <feGaussianBlur stdDeviation="5"/>
 <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
 <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.75 0"/>
-<feBlend mode="plus-lighter" in2="effect1_innerShadow_335_1286" result="effect2_innerShadow_335_1286"/>
+<feBlend mode="plus-lighter" in2="effect1_innerShadow_335_1316" result="effect2_innerShadow_335_1316"/>
 </filter>
 </defs>
 </svg>
