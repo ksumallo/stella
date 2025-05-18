@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ChevronDown, Send } from "lucide-react";
@@ -42,6 +42,21 @@ export default function Conversation({ messages, setMessages }: ConversationProp
 	const [isLoading, setIsLoading] = useState(false);
 	const [fileUris, setFileUris] = useAtom(uploadedFilesAtom);
 	const [selectedModel, setSelectedModel] = useState(LLM_MODELS[0]);
+
+	// Create ref for the messages container
+	const messagesContainerRef = useRef<HTMLDivElement>(null);
+
+	// Scroll to bottom function
+	const scrollToBottom = () => {
+		if (messagesContainerRef.current) {
+			messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+		}
+	};
+
+	// Auto-scroll when messages change or loading state changes
+	useEffect(() => {
+		scrollToBottom();
+	}, [messages, isLoading]);
 
 	const sendMessage = async () => {
 		if (inputMessage.trim() === "") return;
@@ -128,9 +143,14 @@ export default function Conversation({ messages, setMessages }: ConversationProp
 			</div>
 
 			{/* Messages Container */}
-			<div className="flex-1 p-4 overflow-y-auto space-y-4 bg-gray-50 min-h-0">
+			<div ref={messagesContainerRef} className="flex-1 p-4 overflow-y-auto space-y-4 bg-gray-50 min-h-0 max-h-[calc(100vh-13rem)]">
 				{messages.map((msg, index) => (
-					<div key={index} className={`flex ${msg.type === "me" ? "justify-end" : "justify-start"}`}>
+					<div
+						key={index}
+						className={`flex ${msg.type === "me" ? "justify-end" : "justify-start"} animate-in fade-in ${
+							msg.type === "me" ? "slide-in-from-bottom duration-500 ease-in-out" : ""
+						}`}
+					>
 						<div
 							className={`max-w-[70%] py-3 px-5 rounded-xl ${
 								msg.type === "me"
@@ -138,7 +158,22 @@ export default function Conversation({ messages, setMessages }: ConversationProp
 									: "bg-white border-3 border-gray-200 rounded-bl-none border-b-6"
 							}`}
 						>
-							<Markdown>{msg.message}</Markdown>
+							<Markdown
+								components={{
+									// Customize specific markdown elements
+									h1: ({ ...props }) => <h1 className="text-xl font-bold mb-2" {...props} />,
+									h2: ({ ...props }) => <h2 className="text-lg font-bold mb-2" {...props} />,
+									h3: ({ ...props }) => <h3 className="text-md font-bold mb-1" {...props} />,
+									a: ({ ...props }) => <a className="text-blue-500 hover:underline" {...props} />,
+									p: ({ ...props }) => <p className="mb-2" {...props} />,
+									ul: ({ ...props }) => <ul className="list-disc pl-5 mb-2" {...props} />,
+									ol: ({ ...props }) => <ol className="list-decimal pl-5 mb-2" {...props} />,
+									li: ({ ...props }) => <li className="mb-1" {...props} />,
+									code: ({ ...props }) => <code className="block bg-gray-100 p-2 rounded text-sm font-mono my-2 overflow-x-auto" {...props} />,
+								}}
+							>
+								{msg.message}
+							</Markdown>
 							<div className={`text-xs mt-1 ${msg.type === "me" ? "text-gray-500" : "text-gray-500"}`}>
 								{msg.timestamp.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
 								{msg.type === "ai" && <span className="ml-1">• {selectedModel.name}</span>}
@@ -146,15 +181,28 @@ export default function Conversation({ messages, setMessages }: ConversationProp
 						</div>
 					</div>
 				))}
+
+				{/* Loading indicator with bouncing dots */}
+				{isLoading && (
+					<div className="flex justify-start animate-in fade-in slide-in-from-bottom duration-500 ease-in-out">
+						<div className="flex items-center py-3 px-5 rounded-xl bg-white border-3 border-gray-200 rounded-bl-none border-b-6 max-w-[70%]">
+							<div className="flex space-x-1">
+								<div className="h-2 w-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></div>
+								<div className="h-2 w-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></div>
+								<div className="h-2 w-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "600ms" }}></div>
+							</div>
+						</div>
+					</div>
+				)}
 			</div>
 
 			{/* Input Area */}
-			<div className="p-4 border-t flex gap-2 items-center flex-shrink-0">
+			<div className="p-4 border-t flex gap-2 items-center flex-shrink-0 max-height-[100px]">
 				<Input
 					value={inputMessage}
 					onChange={(e) => setInputMessage(e.target.value)}
 					onKeyDown={handleKeyDown}
-					placeholder={isLoading ? `${selectedModel.name} is thinking...` : "Type your message..."}
+					placeholder={isLoading ? `STELLA is thinking...` : "Type your message..."}
 					className="flex-1"
 					disabled={isLoading}
 				/>
