@@ -135,7 +135,7 @@ export async function sendToGemini(prompt: string, inlineData: UploadedFile[]) {
   })
 
   const response = await chat.sendMessage({
-    message: [prompt, ...files]
+    message: [rubrik, prompt, ...files]
   })
 
   console.log('[Gemini]', response);
