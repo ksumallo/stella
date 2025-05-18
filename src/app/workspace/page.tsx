@@ -306,14 +306,13 @@ export default function WorkspacePage() {
 								) : (
 									<></>
 								)}
-								<Button variant="outline" className="w-full border-gray-300" onClick={handleButtonClick}>
-									<Plus className="mr-2" />
-									Upload material
-								</Button>
 							</div>
 						}
 					</div>
-
+					<Button variant="outline" className="w-full border-gray-300 mb-1" onClick={handleButtonClick}>
+						<Plus className="mr-2" />
+						Upload material
+					</Button>
 					{/* Hidden file input */}
 					<input type="file" ref={fileInputRef} onChange={handleFileUpload} accept=".pdf,.txt,.doc,.docx" className="hidden" multiple />
 				</div>
@@ -350,12 +349,11 @@ export default function WorkspacePage() {
 									<p className="text-gray-400 text-sm text-center">PDF, TXT, DOC, or DOCX</p>
 
 									<input type="file" ref={submissionFileInputRef} onChange={handleSubmissionFileUpload} accept=".pdf,.txt,.doc,.docx" className="hidden" />
-
-									<Button variant="outline" onClick={handleSubmissionButtonClick} className="border-gray-300 w-full mt-4">
-										Select File
-									</Button>
 								</div>
 							)}
+							<Button variant="outline" onClick={handleSubmissionButtonClick} className="border-gray-300 w-full mb-4">
+								Select File
+							</Button>
 							<Button variant="primary" onClick={handleSubmit} disabled={isSubmitting || isSubmitted || !submissionFile} className="w-full mb-4">
 								{isSubmitting ? "Submitting..." : isSubmitted ? "Submitted" : "Submit"}
 							</Button>
@@ -370,12 +368,12 @@ export default function WorkspacePage() {
 			</div>
 
 			{/* Desktop View */}
-			<main className="flex flex-col lg:grid lg:grid-cols-6 gap-4 lg:gap-8 h-full">
+			<main className="flex flex-col lg:grid lg:grid-cols-6 gap-4 lg:gap-8 h-full h-1/2">
 				<aside className="hidden lg:flex lg:flex-col lg:col-span-2 gap-4 h-full">
 					{/* Uploaded Materials - Desktop */}
-					<div className="flex flex-col gap-4 p-4 border-b-6 border-3 border-gray-300 rounded-xl min-h-[300px]">
+					<div className="flex flex-col gap-4 p-4 border-b-6 border-3 border-gray-300 rounded-xl min-h-[300px] ">
 						<h2 className="text-lg font-extrabold text-gray-800 mb-3">Reference Materials</h2>
-						<div className="border-2 border-dashed border-gray-300 rounded-xl p-6 flex flex-col gap-4 items-center justify-center">
+						<div className="border-2 border-dashed border-gray-300 rounded-xl p-6 flex flex-col gap-4 items-center justify-center max-h-[500px] overflow-y-auto">
 							{fileUris.map((file) => (
 								<div key={file.uri} className="flex items-center gap-2 p-3 bg-gray-100 rounded-xl border border-gray-300 group w-full">
 									<div className="flex-shrink-0 bg-gray-300 p-2 rounded-xl cursor-pointer" onClick={() => openFileInNewTab(file)}>
@@ -408,17 +406,17 @@ export default function WorkspacePage() {
 							) : (
 								<div className="flex h-full"></div>
 							)}
-							<Button variant="outline" className="w-full border-gray-300" onClick={handleButtonClick}>
-								<Plus className="mr-2" />
-								Upload material
-							</Button>
 						</div>
+						<Button variant="outline" className="w-full border-gray-300" onClick={handleButtonClick}>
+							<Plus className="mr-2" />
+							Upload material
+						</Button>
 						{/* Hidden file input */}
 						<input type="file" ref={fileInputRef} onChange={handleFileUpload} accept=".pdf,.txt,.doc,.docx" className="hidden" multiple />
 					</div>
 
 					{/* Assignment submission bin - Desktop view */}
-					<div className="bg-white flex flex-col gap-4 overflow-y-auto p-4 border-b-6 border-3 border-gray-300 rounded-xl h-full">
+					<div className="bg-white flex flex-col gap-4 overflow-y-auto p-4 border-b-6 border-3 border-gray-300 rounded-xl ">
 						<h2 className="text-lg font-extrabold text-gray-800 mb-3">Assignment Submission</h2>
 
 						{isSubmitted ? (
@@ -430,7 +428,7 @@ export default function WorkspacePage() {
 						) : (
 							<>
 								{submissionFile ? (
-									<div className="flex items-center gap-4 p-4 bg-blue-50 rounded-xl border border-blue-200 group mb-4 h-full">
+									<div className="flex items-center gap-4 p-4 bg-blue-50 rounded-xl border border-blue-200 group mb-4  max-h-[200px]">
 										<div className="flex-shrink-0 bg-blue-100 p-2 rounded-xl cursor-pointer" onClick={() => openFileInNewTab(submissionFile)}>
 											<FileIcon className="h-10 w-10 text-blue-500" />
 										</div>
@@ -446,15 +444,14 @@ export default function WorkspacePage() {
 									<div className="border-2 border-dashed border-gray-300 rounded-xl p-6 flex flex-col items-center justify-center h-full">
 										<Upload className="h-10 w-10 text-gray-400 mb-2" />
 										<p className="text-gray-500 text-center mb-1">Upload your final submission file</p>
-										<p className="text-gray-400 text-sm text-center mb-4">PDF, TXT, DOC, or DOCX</p>
+										<p className="text-gray-400 text-sm text-center">PDF, TXT, DOC, or DOCX</p>
 
 										<input type="file" ref={submissionFileInputRef} onChange={handleSubmissionFileUpload} accept=".pdf,.txt,.doc,.docx" className="hidden" />
-
-										<Button variant="outline" onClick={handleSubmissionButtonClick} className="border-gray-300 mt-4 w-full">
-											Select File
-										</Button>
 									</div>
 								)}
+								<Button variant="outline" onClick={handleSubmissionButtonClick} className="border-gray-300  w-full">
+									Select File
+								</Button>
 								<Button variant="primary" onClick={handleSubmit} disabled={isSubmitting || isSubmitted || !submissionFile} className="w-full">
 									{isSubmitting ? "Submitting..." : isSubmitted ? "Submitted" : "Submit"}
 								</Button>

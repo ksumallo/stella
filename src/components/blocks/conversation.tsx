@@ -109,7 +109,7 @@ export default function Conversation({ messages, setMessages }: ConversationProp
 	};
 
 	return (
-		<div className="flex flex-col w-full h-full min-h-[600px] rounded-xl border-gray-300 border-3 border-b-6">
+		<div className="flex flex-col w-full min-h-[calc(100vh-10rem)] rounded-xl border-gray-300 border-3 border-b-6">
 			{/* Chat Header */}
 			<div className="bg-blackboard text-white p-4 rounded-t-lg flex items-center justify-between -mx-[3px] -mt-[3px]">
 				<div className="flex items-center">
@@ -141,7 +141,7 @@ export default function Conversation({ messages, setMessages }: ConversationProp
 			</div>
 
 			{/* Messages Container */}
-			<div ref={messagesContainerRef} className="flex-1 p-3 pt-8 overflow-y-auto space-y-4 bg-gray-50 min-h-0 max-h-[calc(100vh-13rem)]">
+			<div ref={messagesContainerRef} className="flex-1 p-3 pt-8 overflow-y-auto space-y-4 bg-gray-50 min-h-0 max-h-[calc(100vh)]">
 				{messages.map((msg, index) => (
 					<div
 						key={index}
