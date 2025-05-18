@@ -177,6 +177,15 @@ export default function WorkspacePage() {
 		}
 	};
 
+	// Function to open files in a new tab
+	const openFileInNewTab = (file: File | UploadedFile) => {
+		// Create an object URL for the file
+		const fileUrl = file instanceof File ? URL.createObjectURL(file) : file.uri || URL.createObjectURL(file.file);
+
+		// Open the URL in a new tab
+		window.open(fileUrl, "_blank");
+	};
+
 	return (
 		<div className="p-4 lg:p-8 min-h-screen flex flex-col">
 			{/* Mobile View - Materials first, then Assignment Submission */}
@@ -197,10 +206,10 @@ export default function WorkspacePage() {
 							<div className="border-2 border-dashed border-gray-300 rounded-xl p-6 flex flex-col gap-4 items-center justify-center">
 								{fileUris.map((file) => (
 									<div key={file.uri} className="flex items-center gap-2 p-3 bg-gray-100 rounded-xl border border-gray-300 group w-full">
-										<div className="flex-shrink-0 bg-gray-300 p-2 rounded-xl">
+										<div className="flex-shrink-0 bg-gray-300 p-2 rounded-xl cursor-pointer" onClick={() => openFileInNewTab(file)}>
 											<FileIcon className="h-8 w-8 text-gray-500" />
 										</div>
-										<div className="flex flex-col flex-1 min-w-0">
+										<div className="flex flex-col flex-1 min-w-0 cursor-pointer" onClick={() => openFileInNewTab(file)}>
 											<h3 className="text-base font-semibold text-gray-700 truncate">{file.name}</h3>
 											<span className="text-sm text-gray-500">
 												{file.type === "application/pdf"
@@ -253,10 +262,10 @@ export default function WorkspacePage() {
 						<>
 							{submissionFile ? (
 								<div className="flex items-center gap-2 p-3 bg-blue-50 rounded-xl border border-blue-200 group mb-4">
-									<div className="flex-shrink-0 bg-blue-100 p-2 rounded-xl">
+									<div className="flex-shrink-0 bg-blue-100 p-2 rounded-xl cursor-pointer" onClick={() => openFileInNewTab(submissionFile)}>
 										<FileIcon className="h-8 w-8 text-blue-500" />
 									</div>
-									<div className="flex flex-col flex-1 min-w-0">
+									<div className="flex flex-col flex-1 min-w-0 cursor-pointer" onClick={() => openFileInNewTab(submissionFile)}>
 										<h3 className="text-sm font-semibold text-blue-700 truncate">{submissionFile.name}</h3>
 										<span className="text-xs text-blue-600">Ready for submission</span>
 									</div>
@@ -299,10 +308,10 @@ export default function WorkspacePage() {
 						<div className="border-2 border-dashed border-gray-300 rounded-xl p-6 flex flex-col gap-4 items-center justify-center">
 							{fileUris.map((file) => (
 								<div key={file.uri} className="flex items-center gap-2 p-3 bg-gray-100 rounded-xl border border-gray-300 group w-full">
-									<div className="flex-shrink-0 bg-gray-300 p-2 rounded-xl">
+									<div className="flex-shrink-0 bg-gray-300 p-2 rounded-xl cursor-pointer" onClick={() => openFileInNewTab(file)}>
 										<FileIcon className="h-8 w-8 text-gray-500" />
 									</div>
-									<div className="flex flex-col flex-1 min-w-0">
+									<div className="flex flex-col flex-1 min-w-0 cursor-pointer" onClick={() => openFileInNewTab(file)}>
 										<h3 className="text-base font-semibold text-gray-700 truncate">{file.name}</h3>
 										<span className="text-sm text-gray-500">
 											{file.type === "application/pdf"
@@ -352,10 +361,10 @@ export default function WorkspacePage() {
 							<>
 								{submissionFile ? (
 									<div className="flex items-center gap-4 p-4 bg-blue-50 rounded-xl border border-blue-200 group mb-4 h-full">
-										<div className="flex-shrink-0 bg-blue-100 p-2 rounded-xl">
+										<div className="flex-shrink-0 bg-blue-100 p-2 rounded-xl cursor-pointer" onClick={() => openFileInNewTab(submissionFile)}>
 											<FileIcon className="h-10 w-10 text-blue-500" />
 										</div>
-										<div className="flex flex-col flex-1 min-w-0">
+										<div className="flex flex-col flex-1 min-w-0 cursor-pointer" onClick={() => openFileInNewTab(submissionFile)}>
 											<h3 className="text-md font-semibold text-blue-700 truncate">{submissionFile.name}</h3>
 											<span className="text-sm text-blue-600">Ready for submission</span>
 										</div>
