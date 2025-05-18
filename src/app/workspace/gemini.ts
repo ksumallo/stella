@@ -103,7 +103,7 @@ export async function sendToGemini(prompt: string, inlineData: UploadedFile[]) {
   return response.text;
 }
 
-export async function askFeedback(submission: UploadedFile) {
+export async function askFeedback(submission: UploadedFile, references?: UploadedFile[]) {
   console.log("Asking Gemini for feedback on : ", submission.name);
 
   
@@ -116,7 +116,11 @@ export async function askFeedback(submission: UploadedFile) {
     return;
   }
 
-  const rubrik = 'Provide your feedback on the following submission. Please provide a score out of 30 and a short comment on the submission. The feedback should be constructive and should help the student understand their strengths and weaknesses in the submission.';
+  const rubrik = 'Provide your feedback on this submission. For the instructor, simulate the succinct  feedback that instructors usually give and provide a score out of 30 and a succinct comment on the submission. For STELLA, the feedback should be comprehensive and constructive and should help the student understand their strengths and weaknesses in the submission. For the similarity report, test the submission file against other materials included in the submission.';
+
+  const includedFiles = references ? references.map(file =>
+    ({ fileData: { fileUri: file.uri, mimeType: file.type }})
+  ) : []
 
   // const response = await ai.models.generateContent({ [rubrik, { fileData: { fileUri: submission.uri, mimeType: submission.type }}]})
   const response = await ai.models.generateContent({
@@ -126,7 +130,7 @@ export async function askFeedback(submission: UploadedFile) {
       responseMimeType: "application/json",
       responseSchema: feedbackResponseSchema
     },
-    contents: [rubrik, { fileData: { fileUri: uploadSuccess.uri, mimeType: uploadSuccess.mimeType }}]
+    contents: [rubrik, { fileData: { fileUri: uploadSuccess.uri, mimeType: uploadSuccess.mimeType }}, ...includedFiles]
   })
 
   console.log('[Gemini]', response.text);
