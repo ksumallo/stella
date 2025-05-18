@@ -37,7 +37,47 @@ const feedbackResponseSchema = {
 }
 
 // Define the system instruction for the AI
-const systemInstruction = "You are an AI chatbot named STELLA (System for Transparent Engagement with LLMs for Learning and Assessment). You are designed to assist students in their assessment, be it a paper or code, while adhering to learning objectives and goals. Your primary task is to answer the students' queries. You should provide accurate and relevant information to help them understand the subject matter. However, you must not provide direct answers to any questions that are part of an assignment or exam. Instead, guide the students in finding the right resources or information to complete their tasks independently. Your goal is to support their learning process while ensuring academic integrity to promote responsible and ethical use of AI. Therefore, for the student's information, your conversation with the student will be submitted along with their assignment to the instructor and the instructor will have a full view of this conversation. For instances where the student exhibits a misunderstanding of the subject matter, inform the student in a friendly and informative manner. Refrain from overwhelming the student with lengthy explainations, but state where the misconception lies then formulate questions that will prompt the student to question their current understanding and encourage them to ask more questions that will clarify the topic or further their understanding of the topic. You should also encourage them to think critically and independently about their work. If a student asks for help with a specific assignment or exam question, you should redirect them to the relevant resources, such as the material that they uploaded to the workspace.";
+const systemInstruction = `
+[GENERAL INSTUCTIONS]
+You are an AI chatbot named STELLA (System for Transparent Engagement with LLMs for Learning and Assessment). 
+You are designed to assist students in their assessment, be it a paper or code, while adhering to learning objectives and goals. 
+Your primary task is to answer the students' queries. 
+You should provide accurate and relevant information to help them understand the subject matter. 
+However, you must not provide direct answers to any questions that are part of an assignment or exam. 
+Instead, guide the students in finding the right resources or information to complete their tasks independently. 
+Your goal is to support their learning process while ensuring academic integrity to promote responsible and ethical use of AI. 
+Therefore, for the student's information, your conversation with the student will be submitted along with their assignment to the instructor and the instructor will have a full view of this conversation. 
+For instances where the student exhibits a misunderstanding of the subject matter, inform the student in a friendly and informative manner. 
+Refrain from overwhelming the student with lengthy explainations, but state where the misconception lies then formulate questions that will prompt the student to question their current understanding and encourage them to ask more questions that will clarify the topic or further their understanding of the topic. 
+You should also encourage them to think critically and independently about their work. If a student asks for help with a specific assignment or exam question, it is preferred that you redirect them to the relevant resources, such as the material that they uploaded to the workspace.
+`;
+
+const rubrik = `
+[ASSIGNMENT INSTRUCTIONS]
+This assignment requires you to write a brief reflection paper on the provided article, "A Multiuser, Multisite, and Platform-Independent On-the-Cloud Framework for Interactive Immersion in Holographic XR." 
+
+Instructions:
+Read the provided article carefully.
+Consider the guide questions below as prompts for your reflection. 
+Draft a single paragraph (maximum 200 words) that summarizes your reflection.
+Ensure your reflection draws directly on information presented in the article and the guide questions.
+Save and submit your reflection as a PDF file.
+
+
+Guide Questions:
+The paper identifies challenges for advanced XR, such as high computational demands and facilitating multiuser, multisite synergy. How does the Holo-Cloud framework's cloud-deployable, server-based architecture and emphasis on platform independence serve as a solution to these core technical problems?
+
+Drawing on the experimental results presented (e.g., figures and tables showing resource utilization), what specific observations demonstrate Holo-Cloud's ability to manage resources efficiently and maintain performance when handling varying loads, such as during data loading or supporting multiple users?
+
+Based on the discussion, what is one technical limitation or challenge of the current Holo-Cloud framework identified by the authors, and what is one area of future work or a proposed solution mentioned to address this issue or extend the framework.
+
+Rubrics:
+1) Content & Relevance (5 point): Reflection accurately identifies and discusses key concepts and details from the source paper, addressing themes from the guide questions.
+2) Insight & Critical Thinking (5 point): Reflection goes beyond mere summary, offering a brief analysis, interpretation, or connection based on the information presented in the paper and the guide questions.
+3) Clarity & Conciseness (3 point): Reflection is clearly written, easy to understand, and efficiently conveys ideas within the word limit without unnecessary jargon or repetition.
+4) Adherence to Constraints (1 point): Reflection is a single paragraph, does not exceed 200 words, and is submitted in the required PDF format.
+5) Mechanics (1 point): Reflection contains minimal errors in grammar, spelling, punctuation, and sentence structure.
+`
 
 const ai = new GoogleGenAI({ 
   apiKey: 'AIzaSyDm_stszpExkqPLytA8ElziPIpzE10wJmc', 
@@ -116,7 +156,7 @@ export async function askFeedback(submission: UploadedFile, references?: Uploade
     return;
   }
 
-  const rubrik = 'Provide your feedback on this submission. For the instructor, simulate the succinct  feedback that instructors usually give and provide a score out of 30 and a succinct comment on the submission. For STELLA, the feedback should be comprehensive and constructive and should help the student understand their strengths and weaknesses in the submission. For the similarity report, test the submission file against other materials included in the submission.';
+  const specificInstructions = 'Reflect the grading based on the rubric on the instructor`s feedback instead of STELLA. This simulates the instructor grading the assignment and we refrain from letting the AI give the numeric grade. The role of STELLA is merely to provide insights to the instructor to help them grade the assignment.';
 
   const includedFiles = references ? references.map(file =>
     ({ fileData: { fileUri: file.uri, mimeType: file.type }})
@@ -130,7 +170,7 @@ export async function askFeedback(submission: UploadedFile, references?: Uploade
       responseMimeType: "application/json",
       responseSchema: feedbackResponseSchema
     },
-    contents: [rubrik, { fileData: { fileUri: uploadSuccess.uri, mimeType: uploadSuccess.mimeType }}, ...includedFiles]
+    contents: [specificInstructions, rubrik, { fileData: { fileUri: uploadSuccess.uri, mimeType: uploadSuccess.mimeType }}, ...includedFiles]
   })
 
   console.log('[Gemini]', response.text);
