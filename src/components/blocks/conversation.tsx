@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { ChevronDown, Send } from "lucide-react";
 import Image from "next/image";
 import { sendToGemini } from "@/app/workspace/gemini";
-
 import Markdown from "react-markdown";
 import { useAtom } from "jotai";
 import { uploadedFilesAtom } from "@/app/states";
@@ -110,7 +109,7 @@ export default function Conversation({ messages, setMessages }: ConversationProp
 	};
 
 	return (
-		<div className="flex flex-col w-full h-full min-h-[600px] rounded-xl border-gray-300 border-3 border-b-6">
+		<div className="flex flex-col w-full min-h-[calc(100vh-10rem)] rounded-xl border-gray-300 border-3 border-b-6">
 			{/* Chat Header */}
 			<div className="bg-blackboard text-white p-4 rounded-t-lg flex items-center justify-between -mx-[3px] -mt-[3px]">
 				<div className="flex items-center">
@@ -142,7 +141,7 @@ export default function Conversation({ messages, setMessages }: ConversationProp
 			</div>
 
 			{/* Messages Container */}
-			<div ref={messagesContainerRef} className="flex-1 p-3 pt-8 overflow-y-auto space-y-4 bg-gray-50 min-h-0 max-h-[calc(100vh-13rem)]">
+			<div ref={messagesContainerRef} className="flex-1 p-3 pt-8 overflow-y-auto space-y-4 bg-gray-50 min-h-0 max-h-[calc(100vh)]">
 				{messages.map((msg, index) => (
 					<div
 						key={index}
@@ -198,7 +197,12 @@ export default function Conversation({ messages, setMessages }: ConversationProp
 				{/* Loading indicator with bouncing dots */}
 				{isLoading && (
 					<div className="flex justify-start animate-in fade-in slide-in-from-bottom duration-500 ease-in-out">
-						<div className="flex items-center py-3 px-5 rounded-xl bg-white border-3 border-gray-200 rounded-bl-none border-b-6 max-w-[70%]">
+						{/* STELLA thinking avatar */}
+						<div className="flex-shrink-0 mr-2 -mt-7">
+							<Image src="/stella_thinking.svg" alt="STELLA thinking" width={48} height={48} className="rounded-full" />
+						</div>
+
+						<div className="flex items-center py-3 px-5 rounded-xl bg-white border-3 border-gray-200 rounded-tl-none border-b-6 max-w-[70%]">
 							<div className="flex space-x-1">
 								<div className="h-2 w-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></div>
 								<div className="h-2 w-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></div>
