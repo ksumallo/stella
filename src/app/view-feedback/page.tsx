@@ -1,14 +1,13 @@
 'use client'
 
 import { useAtom } from "jotai";
-import { submissionAtom } from "@/lib/sessionStorage";
 import { PDFObject } from "react-pdfobject";
-import { FileIcon, Upload, X } from "lucide-react";
-import { useState, useRef, ChangeEvent, useEffect } from "react";
-import { Button } from "@/components/ui/button";
+import { FileIcon } from "lucide-react";
+import { useState, useEffect } from "react";
 import { askFeedback } from "../workspace/gemini";
 import { UploadedFile } from "../workspace/page";
 import { Skeleton } from "@/components/ui/skeleton";
+import { submissionFileAtom } from "@/app/states";
 
 interface StellaFeedback {
     summary: string;
@@ -24,104 +23,11 @@ interface SimilarityReport {
     score: number;
 }
 
-function TestSubmissionBin({ onFileChange }: { onFileChange: (file: File | null) => void }) {
-    const [selectedFile, setSelectedFile] = useState<File | null>(null);
-    const fileInputRef = useRef<HTMLInputElement>(null);
-
-    const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-        if (!e.target.files || e.target.files.length === 0) {
-            setSelectedFile(null);
-            onFileChange(null);
-            return;
-        }
-        
-        const file = e.target.files[0];
-        setSelectedFile(file);
-        onFileChange(file);
-        
-        // Reset file input value to allow selecting the same file again
-        if (fileInputRef.current) {
-            fileInputRef.current.value = '';
-        }
-    };
-
-    const handleClickSelectFile = () => {
-        if (fileInputRef.current) {
-            fileInputRef.current.click();
-        }
-    };
-
-    const handleRemoveFile = () => {
-        setSelectedFile(null);
-        onFileChange(null);
-    };
-
-    return (
-        <div className="flex flex-col">
-            <p className="text-gray-600 text-sm mb-4">
-                Select a file to test the AI-driven feedback system. This is for testing purposes only.
-            </p>
-            
-            {selectedFile ? (
-                <div className="space-y-4">
-                    {/* Selected file preview */}
-                    <div className="flex items-center gap-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                        <div className="flex-shrink-0 bg-blue-100 p-2 rounded-lg">
-                            <FileIcon className="h-8 w-8 text-blue-500" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                            <h3 className="text-md font-semibold text-blue-700 truncate">
-                                {selectedFile.name}
-                            </h3>
-                            <p className="text-sm text-blue-600">
-                                {selectedFile.type || 'Document'}
-                            </p>
-                        </div>
-                        <Button 
-                            variant="ghost" 
-                            size="sm"
-                            className="text-gray-500"
-                            onClick={handleRemoveFile}
-                        >
-                            <X className="h-4 w-4" />
-                        </Button>
-                    </div>
-                    
-                    {/* View feedback button */}
-                    <Button 
-                        className="w-full"
-                        variant="default">
-                        View AI Feedback
-                    </Button>
-                </div>
-            ) : (
-                <div 
-                    onClick={handleClickSelectFile}
-                    className="border-2 border-dashed border-gray-300 rounded-xl p-6 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors"
-                >
-                    <Upload className="h-10 w-10 text-gray-400 mb-3" />
-                    <h3 className="font-medium text-gray-700 mb-1">Upload file for testing</h3>
-                    <p className="text-sm text-gray-500 text-center mb-2">
-                        Click to select a PDF, DOC, or TXT file
-                    </p>
-                    
-                    <input
-                        type="file"
-                        ref={fileInputRef}
-                        onChange={handleFileChange}
-                        accept=".pdf,.txt,.doc,.docx"
-                        className="hidden"
-                    />
-                </div>
-            )}
-        </div>
-    );
-}
 
 export default function ViewFeedbackPage() {
-    const [submission] = useAtom(submissionAtom)
-    const [testFile, setTestFile] = useState<File | null>(null);
-    const [testFileUrl, setTestFileUrl] = useState<string | null>(null);
+    const [submissionFile] = useAtom(submissionFileAtom)
+    const [testFile] = useState<File | null>(null);
+    const [testFileUrl] = useState<string | null>(null);
 
     const [similarity, setSimilarity] = useState<SimilarityReport>();
     const [stellaFeedback, setStellaFeedback] = useState<StellaFeedback>();
@@ -130,35 +36,14 @@ export default function ViewFeedbackPage() {
     const [expandStella, setExpandStella] = useState(false);
     const [expandInstructor, setExpandInstructor] = useState(false);
 
-    // Function to handle file selection
-    const handleTestFileChange = (file: File | null) => {
-        console.log('Uploaded a new file:', file);
-        setSimilarity(undefined);
-        setStellaFeedback(undefined);
-        setInstructorFeedback(undefined);
-        // Clear previous URL if it exists
-        if (testFileUrl) {
-            URL.revokeObjectURL(testFileUrl);
-        }
-        
-        setTestFile(file);
-        
-        if (file) {
-            const url = URL.createObjectURL(file);
-            setTestFileUrl(url);
-        } else {
-            setTestFileUrl(null);
-        }
-    };
-
     useEffect(() => {
-        if (!testFile) return;
+        if (!submissionFile) return;
 
         const uploadedFile: UploadedFile = {
             name: testFile?.name || '',
             type: testFile?.type || '',
-            uri: testFileUrl || URL.createObjectURL(testFile),
-            file: testFile,
+            uri: testFileUrl || URL.createObjectURL(submissionFile),
+            file: submissionFile,
             sent: false,
         }
 
@@ -172,17 +57,17 @@ export default function ViewFeedbackPage() {
             .catch((error) => {
                 console.error('Error asking for feedback:', error);
             })
-    }, [testFile])
+    }, [submissionFile])
 
     return <main className='flex flex-col md:flex-row gap-8 p-8'>
         { /* Document Viewer */}
         <section className="flex-3">
-            {testFileUrl ? (
+            {submissionFile ? (
                 <div className="h-[80svh] bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
-                    {testFile?.type === 'application/pdf' ? (
+                    {submissionFile?.type === 'application/pdf' ? (
                         <PDFObject 
                         containerProps={{ className: "h-full" }}
-                            url={testFileUrl} 
+                            url={URL.createObjectURL(submissionFile)} 
                             height="100%"
                             width="100%"
                         />
@@ -292,7 +177,7 @@ export default function ViewFeedbackPage() {
                     <span className='text-gray-800 font-bold'> INSTRUCTOR </span>
                     <span>{expandInstructor ? '▼' : '►'}</span>
                 </div>
-                <div className={`border border-gray-300 rounded-b-lg p-4 transition-all duration-300 overflow-hidden ${expandInstructor ? 'visible' : 'hidden'}`}>
+                <div className={`border bg-gray-100  border-gray-300 rounded-b-lg p-4 transition-all duration-300 overflow-hidden ${expandInstructor ? 'visible' : 'hidden'}`}>
                     <div className="flex">
                         <p className="flex-1">
                             {instructorFeedback ?? <Skeleton className='h-[1ch] w-[10ch] bg-black/30'/> }
@@ -300,18 +185,6 @@ export default function ViewFeedbackPage() {
                     </div>
                 </div>
             </section>
-
-            <div className="rounded-xl overflow-hidden shadow-md bg-white">
-                { /* Submission Bin */ }
-                <div className="bg-blue-600 text-white p-4 rounded-t-xl flex justify-between items-center">
-                    <h2 className="text-xl font-bold">Test Submission</h2>
-                    <span className="text-sm bg-blue-700 px-3 py-1 rounded-full">For Testing</span>
-                </div>
-                
-                <div className="p-4 bg-white">
-                    <TestSubmissionBin onFileChange={handleTestFileChange} />
-                </div>
-            </div>
         </aside>
     </main>
 }
