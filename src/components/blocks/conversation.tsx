@@ -114,7 +114,6 @@ export default function Conversation({ messages, setMessages }: ConversationProp
 			{/* Chat Header */}
 			<div className="bg-blackboard text-white p-4 rounded-t-lg flex items-center justify-between -mx-[3px] -mt-[3px]">
 				<div className="flex items-center">
-					<Image src="/stella.svg" alt="AI Avatar" width={40} height={40} className="mr-2" />
 					<h2 className="font-extrabold text-xl">STELLA Assistant</h2>
 				</div>
 
@@ -143,7 +142,7 @@ export default function Conversation({ messages, setMessages }: ConversationProp
 			</div>
 
 			{/* Messages Container */}
-			<div ref={messagesContainerRef} className="flex-1 p-4 overflow-y-auto space-y-4 bg-gray-50 min-h-0 max-h-[calc(100vh-13rem)]">
+			<div ref={messagesContainerRef} className="flex-1 p-3 pt-8 overflow-y-auto space-y-4 bg-gray-50 min-h-0 max-h-[calc(100vh-13rem)]">
 				{messages.map((msg, index) => (
 					<div
 						key={index}
@@ -151,11 +150,18 @@ export default function Conversation({ messages, setMessages }: ConversationProp
 							msg.type === "me" ? "slide-in-from-bottom duration-500 ease-in-out" : ""
 						}`}
 					>
+						{/* STELLA avatar - only show for AI messages */}
+						{msg.type === "ai" && (
+							<div className="flex-shrink-0 mr-2">
+								<Image src="/stella.svg" alt="STELLA" width={48} height={48} className="rounded-full -mt-7" />
+							</div>
+						)}
+
 						<div
 							className={`max-w-[70%] py-3 px-5 rounded-xl ${
 								msg.type === "me"
-									? "bg-green-600/10 text-gray-700 rounded-br-none border-b-6 border-3 border-green-700/60"
-									: "bg-white border-3 border-gray-200 rounded-bl-none border-b-6"
+									? "bg-green-600/10 text-gray-700 rounded-tr-none border-b-6 border-3 border-green-700/60"
+									: "bg-white border-3 border-gray-200 rounded-tl-none border-b-6"
 							}`}
 						>
 							<Markdown
@@ -179,6 +185,13 @@ export default function Conversation({ messages, setMessages }: ConversationProp
 								{msg.type === "ai" && <span className="ml-1">• {selectedModel.name}</span>}
 							</div>
 						</div>
+
+						{/* User avatar - only show for user messages */}
+						{msg.type === "me" && (
+							<div className="flex-shrink-0 ml-2">
+								<Image src="/profile_placeholder.jpg" alt="User" width={48} height={48} className="rounded-full border-2 border-gray-200 -mt-7" />
+							</div>
+						)}
 					</div>
 				))}
 

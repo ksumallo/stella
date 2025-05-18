@@ -195,40 +195,46 @@ export default function WorkspacePage() {
 				<div className={`bg-white border-gray-300 border-b-6 border-3 rounded-xl p-4 mb-4 ${isSidebarCollapsed ? "hidden" : "block"}`}>
 					<h2 className="text-lg font-extrabold text-gray-800 mb-3">Reference Materials</h2>
 					<div className="flex flex-col gap-4 mb-4">
-						{fileUris.length > 0 ? (
-							fileUris.map((file) => (
-								<div key={file.uri} className="flex items-center gap-2 p-3 bg-gray-100 rounded-xl border border-gray-300 group">
-									<div className="flex-shrink-0 bg-gray-300 p-2 rounded-xl">
-										<FileIcon className="h-8 w-8 text-gray-500" />
+						{
+							<div className="border-2 border-dashed border-gray-300 rounded-xl p-6 flex flex-col gap-4 items-center justify-center">
+								{fileUris.map((file) => (
+									<div key={file.uri} className="flex items-center gap-2 p-3 bg-gray-100 rounded-xl border border-gray-300 group w-full">
+										<div className="flex-shrink-0 bg-gray-300 p-2 rounded-xl">
+											<FileIcon className="h-8 w-8 text-gray-500" />
+										</div>
+										<div className="flex flex-col flex-1 min-w-0">
+											<h3 className="text-base font-semibold text-gray-700 truncate">{file.name}</h3>
+											<span className="text-sm text-gray-500">
+												{file.type === "application/pdf"
+													? "PDF File"
+													: file.type === "text/plain"
+													? "Text File"
+													: file.type.includes("word")
+													? "Word Document"
+													: "Document"}
+											</span>
+										</div>
+										<Button variant="ghost" size="icon" className="opacity-100 transition-opacity" onClick={() => removeFile(file)}>
+											<X className="h-4 w-4" />
+										</Button>
 									</div>
-									<div className="flex flex-col flex-1 min-w-0">
-										<h3 className="text-base font-semibold text-gray-700 truncate">{file.name}</h3>
-										<span className="text-sm text-gray-500">
-											{file.type === "application/pdf"
-												? "PDF File"
-												: file.type === "text/plain"
-												? "Text File"
-												: file.type.includes("word")
-												? "Word Document"
-												: "Document"}
-										</span>
-									</div>
-									<Button variant="ghost" size="icon" className="opacity-100 transition-opacity" onClick={() => removeFile(file)}>
-										<X className="h-4 w-4" />
-									</Button>
-								</div>
-							))
-						) : (
-							<div className="border-2 border-dashed border-gray-300 rounded-xl p-6 flex flex-col items-center justify-center">
-								<FileIcon className="h-10 w-10 text-gray-400 mb-2" />
-								<p className="text-gray-500 text-center mb-1">No files uploaded yet</p>
-								<p className="text-gray-400 text-sm text-center mb-4">Upload PDF, TXT, DOC, or DOCX files</p>
+								))}
+
+								{fileUris.length < 1 ? (
+									<>
+										<FileIcon className="h-10 w-10 text-gray-400 mb-2" />
+										<p className="text-gray-500 text-center mb-1">No files uploaded yet</p>
+										<p className="text-gray-400 text-sm text-center mb-4">Upload PDF, TXT, DOC, or DOCX files</p>
+									</>
+								) : (
+									<></>
+								)}
 								<Button variant="outline" className="w-full border-gray-300" onClick={handleButtonClick}>
 									<Plus className="mr-2" />
 									Upload material
 								</Button>
 							</div>
-						)}
+						}
 					</div>
 
 					{/* Hidden file input */}
@@ -292,15 +298,15 @@ export default function WorkspacePage() {
 					{/* Uploaded Materials - Desktop */}
 					<div className="flex flex-col gap-4 overflow-y-auto p-4 border-b-6 border-3 border-gray-300 rounded-xl min-h-[300px]">
 						<h2 className="text-lg font-extrabold text-gray-800 mb-3">Reference Materials</h2>
-						{fileUris.length > 0 ? (
-							fileUris.map((file) => (
-								<div key={file.uri} className="flex items-center gap-4 p-4 bg-gray-100 rounded-xl border border-gray-300 group">
+						<div className="border-2 border-dashed border-gray-300 rounded-xl p-6 flex flex-col gap-4 items-center justify-center">
+							{fileUris.map((file) => (
+								<div key={file.uri} className="flex items-center gap-2 p-3 bg-gray-100 rounded-xl border border-gray-300 group w-full">
 									<div className="flex-shrink-0 bg-gray-300 p-2 rounded-xl">
-										<FileIcon className="h-12 w-12 text-gray-500" />
+										<FileIcon className="h-8 w-8 text-gray-500" />
 									</div>
 									<div className="flex flex-col flex-1 min-w-0">
-										<h3 className="text-lg font-semibold text-gray-700 truncate">{file.name}</h3>
-										<span className="text-base text-gray-500">
+										<h3 className="text-base font-semibold text-gray-700 truncate">{file.name}</h3>
+										<span className="text-sm text-gray-500">
 											{file.type === "application/pdf"
 												? "PDF File"
 												: file.type === "text/plain"
@@ -310,22 +316,26 @@ export default function WorkspacePage() {
 												: "Document"}
 										</span>
 									</div>
-									<Button variant="ghost" size="icon" className="opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => removeFile(file)}>
+									<Button variant="ghost" size="icon" className="opacity-100 transition-opacity" onClick={() => removeFile(file)}>
 										<X className="h-4 w-4" />
 									</Button>
 								</div>
-							))
-						) : (
-							<div className="border-2 border-dashed border-gray-300 rounded-xl p-6 flex flex-col items-center justify-center flex-1">
-								<FileIcon className="h-10 w-10 text-gray-400 mb-2" />
-								<p className="text-gray-500 text-center mb-1">No files uploaded yet</p>
-								<p className="text-gray-400 text-sm text-center">Upload PDF, TXT, DOC, or DOCX files</p>
-								<Button variant="outline" className="w-full mt-auto border-gray-300" onClick={handleButtonClick}>
-									<Plus className="mr-2" />
-									Upload material
-								</Button>
-							</div>
-						)}
+							))}
+
+							{fileUris.length < 1 ? (
+								<>
+									<FileIcon className="h-10 w-10 text-gray-400 mb-2" />
+									<p className="text-gray-500 text-center mb-1">No files uploaded yet</p>
+									<p className="text-gray-400 text-sm text-center mb-4">Upload PDF, TXT, DOC, or DOCX files</p>
+								</>
+							) : (
+								<></>
+							)}
+							<Button variant="outline" className="w-full border-gray-300" onClick={handleButtonClick}>
+								<Plus className="mr-2" />
+								Upload material
+							</Button>
+						</div>
 						{/* Hidden file input */}
 						<input type="file" ref={fileInputRef} onChange={handleFileUpload} accept=".pdf,.txt,.doc,.docx" className="hidden" multiple />
 					</div>
