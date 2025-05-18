@@ -3,12 +3,12 @@
 import Conversation from "@/components/blocks/conversation";
 import { Button } from "@/components/ui/button";
 import { FileIcon, Plus, X, Upload, CheckCircle2, ChevronUp, ChevronDown } from "lucide-react";
-import { useRef, ChangeEvent, useState } from "react";
+import { useRef, ChangeEvent, useState, useEffect } from "react";
 
 import { deleteFromGemini, uploadToGemini } from "./gemini";
 import { useAtom } from "jotai";
-import { conversationAtom, uploadedFilesAtom } from "../states";
-import { submissionAtom } from "@/lib/sessionStorage";
+import { conversationAtom, submissionFileAtom, uploadedFilesAtom } from "../states";
+import { submissionAtom } from "../states";
 
 export type UploadedFile = {
 	sent: boolean;
@@ -28,7 +28,7 @@ export default function WorkspacePage() {
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const submissionFileInputRef = useRef<HTMLInputElement>(null);
 
-	const [submissionFile, setSubmissionFile] = useState<File | null>(null);
+    const [submissionFile, setSubmissionFile] = useAtom(submissionFileAtom)
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -105,6 +105,51 @@ export default function WorkspacePage() {
 		}
 	};
 
+    useEffect(() => {
+        // Load assignment resource file on component mount
+        const loadAssignmentResource = async () => {
+            try {
+                // Fetch the file from the public directory
+                const response = await fetch('/assignment/assignment_resource.pdf');
+                const blob = await response.blob();
+                
+                // Create a File object from the blob
+                const file = new File([blob], 'assignment_resource.pdf', { 
+                    type: 'application/pdf',
+                    lastModified: new Date().getTime()
+                });
+                
+                // Convert to base64
+                const base64Content = await fileToBase64(file);
+                
+                // Create an UploadedFile object
+                const uploadedFile: UploadedFile = {
+                    sent: false,
+                    uri: URL.createObjectURL(file),
+                    file: file,
+                    name: file.name,
+                    type: file.type,
+                    buffer: base64Content
+                };
+                
+                console.log("Loading assignment resource:", uploadedFile);
+                
+                // Upload to Gemini
+                uploadToGemini([uploadedFile]).then((res) => {
+                    console.log("Uploaded assignment resource:", res);
+                    setFileUris(prev => [...prev, ...res]);
+                }).catch(error => {
+                    console.error("Error uploading assignment resource:", error);
+                });
+                
+            } catch (error) {
+                console.error("Error loading assignment resource:", error);
+            }
+        };
+        
+        loadAssignmentResource();
+    }, [])
+
 	const handleButtonClick = () => {
 		// Trigger file input click
 		if (fileInputRef.current) {
@@ -134,6 +179,30 @@ export default function WorkspacePage() {
 		}
 
 		setSubmissionFile(file);
+        
+        // Clear previous URL if it exists
+        if (submission?.submissionFileUrl) {
+            URL.revokeObjectURL(submission?.submissionFileUrl);
+        }
+        
+        if (file) {
+            const url = URL.createObjectURL(file);
+            setSubmission({
+                references: fileUris.map((f) => f.file),
+                conversation: messages,
+                fileSubmission: submissionFile!,
+                timestamp: new Date(),
+                submissionFileUrl: url,
+            });
+        } else {
+            setSubmission({
+                references: fileUris.map((f) => f.file),
+                conversation: messages,
+                fileSubmission: submissionFile!,
+                timestamp: new Date(),
+                submissionFileUrl: undefined,
+            });
+        }
 
 		// Reset file input
 		if (submissionFileInputRef.current) {
@@ -178,7 +247,7 @@ export default function WorkspacePage() {
 	};
 
 	return (
-		<div className="p-4 lg:p-8 min-h-screen flex flex-col">
+		<div className="p-4 min-h-screen flex flex-col">
 			<div className="flex justify-between mb-4">
 				<div className="flex items-center gap-2">
 					{/* Materials toggle button */}
