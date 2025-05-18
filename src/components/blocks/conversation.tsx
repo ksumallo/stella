@@ -199,7 +199,7 @@ export default function Conversation({ messages, setMessages }: ConversationProp
 					<div className="flex justify-start animate-in fade-in slide-in-from-bottom duration-500 ease-in-out">
 						{/* STELLA thinking avatar */}
 						<div className="flex-shrink-0 mr-2 -mt-7">
-							<Image src="/stella_thinking.svg" alt="STELLA thinking" width={48} height={48} className="rounded-full" />
+							<Image src="/stella_thinking.svg" alt="STELLA thinking" width={48} height={48} className="rounded-full animate-bounce" />
 						</div>
 
 						<div className="flex items-center py-3 px-5 rounded-xl bg-white border-3 border-gray-200 rounded-tl-none border-b-6 max-w-[70%]">
