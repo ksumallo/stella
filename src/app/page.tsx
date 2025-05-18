@@ -52,7 +52,7 @@ export default function Home() {
 					<WorkspacePage />
 				</div>
 
-				<div className={`${currentTab === "feedback" ? "block" : "hidden"} ${enableFeedbackTab ? "bg-gray-800" : ""} w-full`}>
+				<div className={`${currentTab === "feedback" ? "block" : "hidden"} ${enableFeedbackTab ? "bg-gray-50" : ""} w-full`}>
 					<ViewFeedbackPage />
 				</div>
 			</main>

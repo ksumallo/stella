@@ -248,12 +248,11 @@ export default function WorkspacePage() {
 	};
 
 	// Function to open files in a new tab
-	const openFileInNewTab = (file: File | UploadedFile) => {
+	const openFileInNewTab = () => {
 		// Create an object URL for the file
-		const fileUrl = file instanceof File ? URL.createObjectURL(file) : file.uri || URL.createObjectURL(file.file);
 
 		// Open the URL in a new tab
-		window.open(fileUrl, "_blank");
+		window.open("/assignment/assignment_resource.pdf", "_blank");
 	};
 
 	return (
@@ -276,10 +275,10 @@ export default function WorkspacePage() {
 							<div className="border-2 border-dashed border-gray-300 rounded-xl p-6 flex flex-col gap-4 items-center justify-center">
 								{fileUris.map((file) => (
 									<div key={file.uri} className="flex items-center gap-2 p-3 bg-gray-100 rounded-xl border border-gray-300 group w-full">
-										<div className="flex-shrink-0 bg-gray-300 p-2 rounded-xl cursor-pointer" onClick={() => openFileInNewTab(file)}>
+										<div className="flex-shrink-0 bg-gray-300 p-2 rounded-xl cursor-pointer" onClick={() => openFileInNewTab()}>
 											<FileIcon className="h-8 w-8 text-gray-500" />
 										</div>
-										<div className="flex flex-col flex-1 min-w-0 cursor-pointer" onClick={() => openFileInNewTab(file)}>
+										<div className="flex flex-col flex-1 min-w-0 cursor-pointer" onClick={() => openFileInNewTab()}>
 											<h3 className="text-base font-semibold text-gray-700 truncate">{file.name}</h3>
 											<span className="text-sm text-gray-500">
 												{file.type === "application/pdf"
@@ -331,10 +330,10 @@ export default function WorkspacePage() {
 						<>
 							{submissionFile ? (
 								<div className="flex items-center gap-2 p-3 bg-blue-50 rounded-xl border border-blue-200 group mb-4">
-									<div className="flex-shrink-0 bg-blue-100 p-2 rounded-xl cursor-pointer" onClick={() => openFileInNewTab(submissionFile)}>
+									<div className="flex-shrink-0 bg-blue-100 p-2 rounded-xl cursor-pointer">
 										<FileIcon className="h-8 w-8 text-blue-500" />
 									</div>
-									<div className="flex flex-col flex-1 min-w-0 cursor-pointer" onClick={() => openFileInNewTab(submissionFile)}>
+									<div className="flex flex-col flex-1 min-w-0 cursor-pointer">
 										<h3 className="text-sm font-semibold text-blue-700 truncate">{submissionFile.name}</h3>
 										<span className="text-xs text-blue-600">Ready for submission</span>
 									</div>
@@ -368,7 +367,7 @@ export default function WorkspacePage() {
 			</div>
 
 			{/* Desktop View */}
-			<main className="flex flex-col lg:grid lg:grid-cols-6 gap-4 lg:gap-8 h-full h-1/2">
+			<main className="flex flex-col lg:grid lg:grid-cols-6 gap-4 lg:gap-8 h-full">
 				<aside className="hidden lg:flex lg:flex-col lg:col-span-2 gap-4 h-full">
 					{/* Uploaded Materials - Desktop */}
 					<div className="flex flex-col gap-4 p-4 border-b-6 border-3 border-gray-300 rounded-xl min-h-[300px] ">
@@ -376,10 +375,10 @@ export default function WorkspacePage() {
 						<div className="border-2 border-dashed border-gray-300 rounded-xl p-6 flex flex-col gap-4 items-center justify-center max-h-[500px] overflow-y-auto">
 							{fileUris.map((file) => (
 								<div key={file.uri} className="flex items-center gap-2 p-3 bg-gray-100 rounded-xl border border-gray-300 group w-full">
-									<div className="flex-shrink-0 bg-gray-300 p-2 rounded-xl cursor-pointer" onClick={() => openFileInNewTab(file)}>
+									<div className="flex-shrink-0 bg-gray-300 p-2 rounded-xl cursor-pointer" onClick={() => openFileInNewTab()}>
 										<FileIcon className="h-8 w-8 text-gray-500" />
 									</div>
-									<div className="flex flex-col flex-1 min-w-0 cursor-pointer" onClick={() => openFileInNewTab(file)}>
+									<div className="flex flex-col flex-1 min-w-0 cursor-pointer" onClick={() => openFileInNewTab()}>
 										<h3 className="text-base font-semibold text-gray-700 truncate">{file.name}</h3>
 										<span className="text-sm text-gray-500">
 											{file.type === "application/pdf"
@@ -429,10 +428,10 @@ export default function WorkspacePage() {
 							<>
 								{submissionFile ? (
 									<div className="flex items-center gap-4 p-4 bg-blue-50 rounded-xl border border-blue-200 group mb-4  max-h-[200px]">
-										<div className="flex-shrink-0 bg-blue-100 p-2 rounded-xl cursor-pointer" onClick={() => openFileInNewTab(submissionFile)}>
+										<div className="flex-shrink-0 bg-blue-100 p-2 rounded-xl cursor-pointer">
 											<FileIcon className="h-10 w-10 text-blue-500" />
 										</div>
-										<div className="flex flex-col flex-1 min-w-0 cursor-pointer" onClick={() => openFileInNewTab(submissionFile)}>
+										<div className="flex flex-col flex-1 min-w-0 cursor-pointer">
 											<h3 className="text-md font-semibold text-blue-700 truncate">{submissionFile.name}</h3>
 											<span className="text-sm text-blue-600">Ready for submission</span>
 										</div>
