@@ -141,6 +141,16 @@ export async function sendToGemini(prompt: string, inlineData: UploadedFile[]) {
 	return response.text;
 }
 
+export async function chatToGemini(prompt: string, personality: string) {
+	const response = await chat.sendMessage({
+		message: [prompt, "[Personality:]\n" + personality],
+	});
+
+	console.log("[Gemini]", response);
+
+	return response.text;
+}
+
 export async function askFeedback(submission: UploadedFile, references?: UploadedFile[]) {
 	console.log("Asking Gemini for feedback on : ", submission.name);
 
