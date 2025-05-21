@@ -44,7 +44,7 @@ export default function SettingsPage() {
 				</aside>
 
 				<aside className="p-4 flex-1 border-2 border-gray-400 rounded-xl ">
-                    <h2 className='text-xl font-bold'> What should be the structure of STELLA's responses? </h2>
+                    <h2 className='text-xl font-bold'> What should be the structure of STELLA&apos s responses? </h2>
                     <h4 className='text-md font-semibold'> Be as specific and clear as possible. </h4>
 					<textarea
                         className='h-[70vh] p-4 bg-blackboard w-full border-2 border-gray-400 rounded-md text-white text-shadow-md text-shadow-black/20'

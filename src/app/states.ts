@@ -1,7 +1,6 @@
 import { Message } from '@/components/blocks/conversation';
 import { atom } from 'jotai';
 import { UploadedFile } from './workspace/page';
-import { defaultSystemInstruction } from './workspace/gemini';
 
 export const uploadedFilesAtom = atom<UploadedFile[]>([])
 
