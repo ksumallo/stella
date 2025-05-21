@@ -5,6 +5,7 @@ import WorkspacePage from "./workspace/page";
 import ViewFeedbackPage from "./view-feedback/page";
 import { useAtom } from "jotai";
 import { submissionAtom } from "./states";
+import SettingsPage from "./settings/page";
 
 export default function Home() {
 	const [currentTab, setCurrentTab] = useState("workspace");
@@ -30,8 +31,7 @@ export default function Home() {
 					className={`rounded-t-2xl border-2 px-8 py-2 cursor-pointer ${currentTab === "workspace" ? selectedState : ""}`}
 					onClick={() => {
 						setCurrentTab("workspace");
-					}}
-				>
+					}}>
 					Workspace
 				</div>
 
@@ -46,6 +46,15 @@ export default function Home() {
 				>
 					View Feedback
 				</div>
+
+				<div
+					key={"instructions"}
+					className={`rounded-t-2xl border-2 px-8 py-2 cursor-pointer ${currentTab === "instructions" ? selectedState : ""}`}
+					onClick={() => {
+						setCurrentTab("instructions");
+					}}>
+					System Instructions
+				</div>
 			</nav>
 			<main className="flex rounded-2xl border-2 border-gray-200">
 				<div className={(currentTab === "workspace" ? "block" : "hidden") + " w-full"}>
@@ -54,6 +63,10 @@ export default function Home() {
 
 				<div className={`${currentTab === "feedback" ? "block" : "hidden"} ${enableFeedbackTab ? "bg-gray-50" : ""} w-full`}>
 					<ViewFeedbackPage />
+				</div>
+
+				<div className={`${currentTab === "instructions" ? "block" : "hidden"} ${enableFeedbackTab ? "bg-gray-50" : ""} w-full`}>
+					<SettingsPage />
 				</div>
 			</main>
 		</div>

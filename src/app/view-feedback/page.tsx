@@ -7,7 +7,7 @@ import { useState, useEffect } from "react";
 import { askFeedback } from "../workspace/gemini";
 import { UploadedFile } from "../workspace/page";
 import { Skeleton } from "@/components/ui/skeleton";
-import { submissionFileAtom } from "@/app/states";
+import { responseStructureAtom, submissionFileAtom, systemInstructionsAtom } from "@/app/states";
 
 interface StellaFeedback {
 	summary: string;
@@ -24,7 +24,10 @@ interface SimilarityReport {
 }
 
 export default function ViewFeedbackPage() {
+	const [systemInstruction] = useAtom(systemInstructionsAtom);
+	const [responseStructure] = useAtom(responseStructureAtom);
 	const [submissionFile] = useAtom(submissionFileAtom);
+
 	const [testFile] = useState<File | null>(null);
 	const [testFileUrl] = useState<string | null>(null);
 
@@ -46,7 +49,7 @@ export default function ViewFeedbackPage() {
 			sent: false,
 		};
 
-		askFeedback(uploadedFile)
+		askFeedback(uploadedFile, [], { systemInstruction, responseStructure })
 			.then((data) => {
 				const feedback = JSON.parse(data ?? "");
 				setSimilarity(feedback.similarity || "No report available");

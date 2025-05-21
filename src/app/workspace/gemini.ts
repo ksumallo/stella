@@ -9,6 +9,11 @@ type InlineData = {
 	};
 };
 
+interface ResponseConfig {
+	systemInstruction: string;
+	responseStructure: string;
+}
+
 const feedbackResponseSchema = {
 	type: Type.OBJECT,
 	properties: {
@@ -37,8 +42,7 @@ const feedbackResponseSchema = {
 };
 
 // Define the system instruction for the AI
-const systemInstruction = `
-[GENERAL INSTUCTIONS]
+export const defaultSystemInstruction = `[GENERAL INSTUCTIONS]
 You are an AI chatbot named STELLA (System for Transparent Engagement with LLMs for Learning and Assessment). 
 You are designed to assist students in their assessment, be it a paper or code, while adhering to learning objectives and goals. 
 Your primary task is to answer the students' queries. 
@@ -51,6 +55,11 @@ For instances where the student exhibits a misunderstanding of the subject matte
 Refrain from overwhelming the student with lengthy explainations, but state where the misconception lies then formulate questions that will prompt the student to question their current understanding and encourage them to ask more questions that will clarify the topic or further their understanding of the topic. 
 You should also encourage them to think critically and independently about their work. If a student asks for help with a specific assignment or exam question, it is preferred that you redirect them to the relevant resources, such as the material that they uploaded to the workspace.
 `;
+
+// Instructions that are specific to the assignment at hand
+// Can be edited to support custom assignment instructions
+const specificInstructions =
+	"Reflect the grading based on the rubric on the instructor`s feedback instead of STELLA. This simulates the instructor grading the assignment and we refrain from letting the AI give the numeric grade. The role of STELLA is merely to provide insights to the instructor to help them grade the assignment.";
 
 const rubrik = `
 [ASSIGNMENT INSTRUCTIONS]
@@ -86,9 +95,9 @@ const chat = ai.chats.create({
 	// const response = await ai.models.generateContent({
 	model: "gemini-2.0-flash",
 	history: [],
-	config: {
-		systemInstruction: systemInstruction,
-	},
+	// config: {
+	// 	systemInstruction: systemInstruction,
+	// },
 });
 
 // Convert a File to base64 string for Gemini inlineData format
@@ -123,17 +132,21 @@ export async function fileToInlineData(file: File): Promise<InlineData> {
 	}
 }
 
-export async function sendToGemini(prompt: string, inlineData: UploadedFile[]) {
-	// console.log("Sending message to Gemini with files: ", inlineData);
-
+export async function sendToGemini(prompt: string, inlineData: UploadedFile[], config?: ResponseConfig) {
 	const filtered = inlineData.filter((file) => file.sent === false);
 
 	const files = filtered.map((file) => {
 		return { fileData: { fileUri: file.uri, mimeType: file.type } };
 	});
 
+	const instructions = [
+		"[The user describes that STELLA should respond like so:]\n" + config?.systemInstruction,
+		"[The user describes that STELLA should structure its response like so:]\n" + config?.responseStructure,
+		"[User Prompt:]\n" + prompt
+	]
+
 	const response = await chat.sendMessage({
-		message: [rubrik, prompt, ...files],
+		message: [instructions.join('\n\n'), ...files],
 	});
 
 	console.log("[Gemini]", response);
@@ -151,7 +164,7 @@ export async function chatToGemini(prompt: string, personality: string) {
 	return response.text;
 }
 
-export async function askFeedback(submission: UploadedFile, references?: UploadedFile[]) {
+export async function askFeedback(submission: UploadedFile, references?: UploadedFile[], config?: ResponseConfig) {
 	console.log("Asking Gemini for feedback on : ", submission.name);
 
 	const uploadSuccess = await ai.files.upload({
@@ -163,16 +176,13 @@ export async function askFeedback(submission: UploadedFile, references?: Uploade
 		return;
 	}
 
-	const specificInstructions =
-		"Reflect the grading based on the rubric on the instructor`s feedback instead of STELLA. This simulates the instructor grading the assignment and we refrain from letting the AI give the numeric grade. The role of STELLA is merely to provide insights to the instructor to help them grade the assignment.";
-
 	const includedFiles = references ? references.map((file) => ({ fileData: { fileUri: file.uri, mimeType: file.type } })) : [];
 
 	// const response = await ai.models.generateContent({ [rubrik, { fileData: { fileUri: submission.uri, mimeType: submission.type }}]})
 	const response = await ai.models.generateContent({
 		model: "gemini-2.0-flash",
 		config: {
-			systemInstruction: systemInstruction,
+			systemInstruction: config?.systemInstruction,
 			responseMimeType: "application/json",
 			responseSchema: feedbackResponseSchema,
 		},

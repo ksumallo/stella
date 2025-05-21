@@ -8,7 +8,7 @@ import Image from "next/image";
 import { sendToGemini } from "@/app/workspace/gemini";
 import Markdown from "react-markdown";
 import { useAtom } from "jotai";
-import { uploadedFilesAtom } from "@/app/states";
+import { responseStructureAtom, systemInstructionsAtom, uploadedFilesAtom } from "@/app/states";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -37,9 +37,12 @@ interface ConversationProps {
 }
 
 export default function Conversation({ messages, setMessages }: ConversationProps) {
+	const [systemInstruction] = useAtom(systemInstructionsAtom)
+	const [responseStructure] = useAtom(responseStructureAtom)
+	const [fileUris, setFileUris] = useAtom(uploadedFilesAtom);
+
 	const [inputMessage, setInputMessage] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
-	const [fileUris, setFileUris] = useAtom(uploadedFilesAtom);
 	const [selectedModel, setSelectedModel] = useState(LLM_MODELS[0]);
 
 	// Create ref for the messages container
@@ -78,7 +81,7 @@ export default function Conversation({ messages, setMessages }: ConversationProp
 		try {
 			// Use reference files if provided
 			// In a real implementation, you would pass the selectedModel.id to sendToGemini
-			const response = await sendToGemini(userQuery, fileUris);
+			const response = await sendToGemini(userQuery, fileUris, { systemInstruction, responseStructure });
 			setFileUris(fileUris.map((file) => ({ ...file, sent: true })));
 
 			console.log(`Got message from ${selectedModel.name}:`, response);
