@@ -149,7 +149,7 @@ export default function WorkspacePage() {
 		};
 
 		loadAssignmentResource();
-	});
+	}, []);
 
 	const handleButtonClick = () => {
 		// Trigger file input click
